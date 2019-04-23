@@ -1,0 +1,19 @@
+.hidden-start {
+  display: none;
+}
+
+.account-creation-jumbo {
+  background-image: linear-gradient(silver, springgreen, seagreen, springgreen, silver);
+}
+
+.orange-bg {
+  background-image: linear-gradient(orange, orangered, orange);
+}
+
+.green-bg {
+  background-image: linear-gradient(green, limegreen, green);
+}
+
+.red-bg {
+  background-image: linear-gradient(firebrick, red, firebrick);
+}
