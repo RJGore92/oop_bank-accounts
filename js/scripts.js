@@ -56,12 +56,14 @@ function BankAccount(accountHolder, bankDetails, accountFunds) {
   this.accountFunds = accountFunds
 }
 
-BankAccount.prototype.updateFunds = function () {
-  var fundsDataToUpdate = this.accountFunds;
+BankAccount.prototype.updateFunds = function (targetNumber) {
   var spanIDToTarget = this.accountID;
+  $("span#account"+spanIDToTarget+"-funds").text(targetNumber);
 };
 
 BankAccount.prototype.determineOverdraft = function (removalVal) {
+  var moneyBeingRemoved = parseFloat(removalVal).toFixed(2);
+  var bankFunds = parseFloat(this.accountFunds).toFixed(2);
   if (removalVal > this.accountFunds) {
     return true;
   }
@@ -71,10 +73,13 @@ BankAccount.prototype.determineOverdraft = function (removalVal) {
 };
 
 BankAccount.prototype.withdrawFunds = function (withdrawVal) {
-  var moneyToWithdraw = parseFloat(withdrawVal).toFixed(2)
-  if (!(determineOverdraft(moneyToWithdraw))) {
-    this.accountFunds -= moneyToWithdraw;
-    this.updateFunds();
+  var initialFunds = parseFloat(this.accountFunds);
+  var moneyToWithdraw = parseFloat(withdrawVal);
+  if (!(this.determineOverdraft(moneyToWithdraw))) {
+    var moneyDifference = initialFunds - moneyToWithdraw;
+    this.accountFunds = moneyDifference;
+    this.updateFunds(parseFloat(moneyDifference).toFixed(2));
+    console.log(this.accountFunds);
     return true;
   }
   else {
@@ -84,9 +89,13 @@ BankAccount.prototype.withdrawFunds = function (withdrawVal) {
 };
 
 BankAccount.prototype.depositFunds = function (depositVal) {
-  var moneyToDeposit = parseFloat(depositVal).toFixed(2);
-  this.accountFunds += moneyToDeposit;
-  this.updateFunds();
+  var initialFunds = this.accountFunds;
+  var moneyToDeposit = depositVal;
+  var moneySum = parseFloat(initialFunds) + parseFloat(moneyToDeposit);
+  console.log(typeof(moneySum));
+  this.accountFunds = moneySum;
+  this.updateFunds(parseFloat(moneySum).toFixed(2));
+  console.log(this.accountFunds);
   return true;
 };
 
@@ -109,17 +118,65 @@ BankAccount.prototype.transferFunds = function (targetAccID, transferVal) {
   }
 };
 
-BankAccount.prototype.printDataToOutput = function () {
-  
+BankAccount.prototype.printDataToOutput = function (pendingID) {
+  var pendingAccountNumber = pendingID + 1;
+  var bankAccountRead = this.bankDetails.length - 1;
+  $("div.account-output-div").append(
+    "<div class='jumbotron account-main-background' id='bank-account" + pendingAccountNumber + "'>" +
+      "<h3>" + this.accountHolder + "'s " + this.bankDetails[bankAccountRead] + " account with " + this.bankDetails[0] + "</h3>" +
+      "<div class='row'>" +
+        "<div class='col-6'>"+
+          "<div class='jumbotron account-background-left'>"+
+            "<h4>State an amount of money below and what you want to do with it.</h4><br>" +
+            "<input type='number' id='account-manipulation"+ pendingAccountNumber +"' step='0.01' value='0.00' placeholder='0.00'>" +
+          "</div>" +
+        "</div>" +
+        "<div class='col-6'>"+
+          "<div class='jumbotron account-background-right'>"+
+            "<h4>Below is how much money is in this account presently.</h4><br>" +
+            "<div class='account-funds'>" +
+              "<h5>$<span id='account" + pendingAccountNumber + "-funds'></span></h5>" +
+            "</div>" +
+          "</div>" +
+        "</div>" +
+      "</div>" +
+      "<div class='jumbotron account-background-all'>" +
+        "<div class='row'>" +
+          "<div class='col-6'>" +
+            "<button type='button' class='btn' value='" + pendingAccountNumber + "' onclick='depositToAccount(this.value)'>Deposit</button>" +
+          "</div>" +
+          "<div class='col-6'>" +
+            "<button type='button' class='btn' value='" + pendingAccountNumber + "' onclick='withdrawFromAccount(this.value)'>Withdraw</button>" +
+          "</div>" +
+        "</div>" +
+      "</div>" +
+    "</div>"
+  );
+  this.updateFunds(parseFloat($("input#initial-deposit-input").val()).toFixed(2));
 };
+
+function depositToAccount(accountTarget) {
+  var bankAccountToRead = currentBankAccountList.readAccountInfo(accountTarget);
+  var moneyToDeposit = parseFloat($("input#account-manipulation" + accountTarget).val()).toFixed(2);
+  bankAccountToRead.depositFunds(moneyToDeposit);
+  bankAccountToRead.updateFunds();
+}
+
+function withdrawFromAccount(accountTarget) {
+  var bankAccountToRead = currentBankAccountList.readAccountInfo(accountTarget);
+  var moneyToWithdraw = parseFloat($("input#account-manipulation" + accountTarget).val()).toFixed(2);
+  bankAccountToRead.withdrawFunds(moneyToWithdraw);
+  bankAccountToRead.updateFunds();
+}
 
 function pruneInfoWhiteSpace(infoPoints) {
   var infoToTrim = infoPoints;
   var phaseOneTrim = infoToTrim.trim();
   var phaseTwoTrim = phaseOneTrim.split(" ");
   var phaseThreeTrim = phaseTwoTrim.filter(data => data.length > 0);
-  finalPhaseTrim = phaseThreeTrim.join(" ");
+  var finalPhaseTrim = phaseThreeTrim.join(" ");
   console.log(finalPhaseTrim);
+  return finalPhaseTrim;
 }
 
 
@@ -166,16 +223,53 @@ function revertFull() {
   $("div#form-stage-three").slideToggle();
 }
 
+function newAccFullReset() {
+  $("div#form-restart-buttons").slideToggle();
+  $("div#form-stage-one").slideToggle();
+  $("span.first-name-temp").text("");
+  $("span.last-name-temp").text("");
+  $("span.bank-name-temp").text("");
+  $("span.bank-add-temp").hide();
+  $("span.bank-add-temp").text("");
+  $("input#first-name-input").val("John");
+  $("input#last-name-input").val("Doe");
+  $("input#bank-name-input").val("Epicodus Credit Union");
+  $("input#bank-address-input").val("");
+  $("select#account-type-input").selectedIndex = 0;
+  $("input#initial-deposit-input").val(0.00);
+}
+
+function newAccRetainNameOnly() {
+  $("div#form-restart-buttons").slideToggle();
+  $("div#form-stage-two").slideToggle();
+  $("span.bank-name-temp").text("");
+  $("span.bank-add-temp").hide();
+  $("span.bank-add-temp").text("");
+  $("input#bank-name-input").val("Epicodus Credit Union");
+  $("input#bank-address-input").val("");
+  $("select#account-type-input").selectedIndex = 0;
+  $("input#initial-deposit-input").val(0.00);
+}
+
+function newAccRetainNameAndBank() {
+  $("div#form-restart-buttons").slideToggle();
+  $("div#form-stage-three").slideToggle();
+  $("select#account-type-input").selectedIndex = 0;
+  $("input#initial-deposit-input").val(0.00);
+}
+
 function generateFullName(firstName, lastName) {
   return firstName + " " + lastName;
 }
 
 $(document).ready(function() {
+  var pendingBankAccountNumber = 0;
   $("form#account-creator").submit(function(event) {
     event.preventDefault();
     var firstNameIn = $("input#first-name-input").val();
-    var firstnameRefined = pruneInfoWhiteSpace(firstNameIn);
-    var lastNameIn = $("input#first-name-input").val();
+    console.log(firstNameIn);
+    var firstNameRefined = pruneInfoWhiteSpace(firstNameIn);
+    var lastNameIn = $("input#last-name-input").val();
     var lastNameRefined = pruneInfoWhiteSpace(lastNameIn);
     var fullName = generateFullName(firstNameRefined, lastNameRefined);
     console.log(fullName);
@@ -194,8 +288,13 @@ $(document).ready(function() {
       return false;
     }
     bankDetailsIn.push(bankAccountTypeIn);
-    var accountInitialFunds = parseFloat($("input#initial-deposit-input").val()).toFixed(2);
+    var accountInitialFunds = parseFloat($("input#initial-deposit-input").val());
+    console.log(typeof(accountInitialFunds));
     var pendingBankAccount = new BankAccount(fullName, bankDetailsIn, accountInitialFunds);
-    pendingBankAccount.printDataToOutput();
+    currentBankAccountList.addAccount(pendingBankAccount);
+    pendingBankAccount.printDataToOutput(pendingBankAccountNumber);
+    pendingBankAccountNumber += 1;
+    $("div#form-stage-three").slideToggle();
+    $("div#form-restart-buttons").slideToggle();
   });
 });

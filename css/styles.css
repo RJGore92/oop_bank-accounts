@@ -17,3 +17,26 @@
 .red-bg {
   background-image: linear-gradient(firebrick, red, firebrick);
 }
+
+.account-background-all {
+  background-image: linear-gradient(to right, gainsboro, mediumaquamarine, mediumseagreen, mediumaquamarine, gainsboro);
+  height: 75px;
+  border-radius: 20px;
+  padding: 25px;
+}
+
+.account-background-left {
+  background-image: linear-gradient(to right, gainsboro, mediumaquamarine, mediumseagreen);
+  height: 300px;
+  border-radius: 50px;
+}
+
+.account-background-right {
+  background-image: linear-gradient(to right, mediumseagreen, mediumaquamarine, gainsboro);
+  height: 300px;
+  border-radius: 50px;
+}
+
+.account-main-background {
+  background-color: limegreen;
+}

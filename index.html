@@ -88,14 +88,26 @@
                 <button type="button" class="btn orange-bg" onclick="revertFormTwo()">Return to bank info Input.</button>
               </div>
               <div class="col">
-                <button type="submit" class="btn green-bg">Proceed to initial account details.</button>
+                <button type="submit" class="btn green-bg">Create your account.</button>
               </div>
             </div>
           </div>
         </form>
-      </div>
-      <div id="form-restart-buttons">
+        <div class="hidden-start" id="form-restart-buttons">
+          <p>Do you wish to create a new account?</p>
+          <div class="row">
+            <div class="col-4">
+              <button type="button" class="btn" onclick="newAccRetainNameAndBank()">Yes, Same name and bank.</button>
+            </div>
+            <div class="col-4">
+              <button type="button" class="btn" onclick="newAccRetainNameOnly()">Yes, same name only.</button>
+            </div>
+            <div class="col-4">
+              <button type="button" class="btn" onclick="newAccFullReset()">Yes, from beginning.</button>
+            </div>
+          </div>
 
+        </div>
       </div>
       <div class="account-output-div">
 
