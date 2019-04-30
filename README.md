@@ -23,12 +23,34 @@ No known bugs are present in this project.
 
 ## Assignment Specs
 
+* Upon application startup, the application will present a three-stage form for creating a bank account.  The user will be asked to fill out the following information in order.
+1. First and last name.
+2. Bank name (and optional bank address).
+3. Select account type and state initial deposit.
 
+* Once the account is "submitted", a new div appears below that allows the user to manipulate the account funds by depositing and withdrawing money.  In this div, there are three sections:
+1. Top left: input for manipulating current account's money.
+2. Top right: display for money left in account.
+3. Bottom row: buttons to choose how to manipulate the money in the account (deposit or withdraw).
+
+* Depositing money will add money to the account, withdrawing will remove.  Before a withdraw is made on button click, the program first checks to see if the withdraw amount is greater than the money left in the account.  If the money left is less than the attempted withdraw amount, the withdraw will fail and the user is alerted that withdrawing that much money will overdraft the account.
 
 ####  Inputs and outputs (examples):
 
+* Form asks for name, bank info, and account details with initial deposit.  (name and bank info values are default, initial deposit and account type changed from default to demo)
+  * Inputs: name (first and last): John Doe, bank name: Epicodus Credit Union, account type select: Checking, initial deposit: 150.00
+  * Output: New div created beneath form with header "John Doe's Checking account with Epicodus Credit Union" and displays as described above in the second "specs" bullet point.
 
+* Clicking the "deposit" button of a respective account div group's account will add the money in the account div's number input to the account and update the display.
+  * Input: 25, account value at 150
+  * Output: display adjustment to add $25 to the $150 in the account, the display presenting $175.00, return true.
 
+* Clicking the "withdraw" button will attempt to remove money from the respective account's money value.  If the money value to withdraw is greater than the account's current money, it alerts the user about an overdraft and does not withdraw.  Otherwise, the withdraw goes through.
+  * Input example A: input to withdraw: 15, money value in account is 150.
+  * Output A: display adjusts to $135.00 in bank account's value, return true.
+
+  * Input example A: input to withdraw: 35, money value in account is 25.
+  * Output A: display does not adjust, alert given about overdraft, return false.
 
 ## Technologies Used
 
